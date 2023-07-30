@@ -2,6 +2,8 @@ const { User } = require("../../models/user");
 const bcrypt = require("bcryptjs");
 const { UpsErrors, ctrlWraper } = require("../../Helpers");
 const jwt = require("jsonwebtoken");
+// const { nanoid } = require("nanoid");
+
 require("dotenv").config();
 
 const { SECRET_KEY } = process.env;
@@ -12,6 +14,11 @@ const login = async (req, res) => {
   if (!user) {
     throw UpsErrors(401, "Email or password invalid");
   }
+
+  if (!user.veryfy) {
+    throw UpsErrors(401, "Email not verified");
+  }
+
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
     throw UpsErrors(401, "Email or password invalid");
